@@ -5,199 +5,261 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Dashboard</title>
+<title>福岡の天気</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ===== デザイントークン ===== */
+  :root {
+    --bg:           #f8f9fa;
+    --surface:      #ffffff;
+    --surface2:     #f1f3f5;
+    --border:       #e2e8f0;
+    --text:         #1a1a2e;
+    --text2:        #4b5568;
+    --text3:        #8a94a6;
+    --accent:       #2563eb;
+    --accent2:      #3b82f6;
+    --accent-bg:    #eff6ff;
+    --shadow:       0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06);
+    --radius:       10px;
+    --temp-cold:    #1d4ed8;
+    --temp-cool:    #047857;
+    --temp-mild:    #a16207;
+    --temp-warm:    #c2410c;
+    --temp-hot:     #ea580c;
+    --temp-very-hot:#dc2626;
+    --pop-low:      #059669;
+    --pop-mid:      #65a30d;
+    --pop-high:     #d97706;
+    --pop-vhigh:    #2563eb;
+    --rel-a:        #15803d;
+    --rel-b:        #b45309;
+    --rel-c:        #b91c1c;
+    --rel-a-bg:     rgba(5,150,105,0.10);
+    --rel-b-bg:     rgba(217,119,6,0.10);
+    --rel-c-bg:     rgba(220,38,38,0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:           #0b0b12;
+      --surface:      #14141d;
+      --surface2:     #1d1d2a;
+      --border:       #26263a;
+      --text:         #ececf4;
+      --text2:        #b6b6cc;
+      --text3:        #777792;
+      --accent:       #3b82f6;
+      --accent2:      #60a5fa;
+      --accent-bg:    rgba(59,130,246,0.10);
+      --shadow:       0 1px 2px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+      --temp-cold:    #93c5fd;
+      --temp-cool:    #86efac;
+      --temp-mild:    #fde047;
+      --temp-warm:    #fbbf24;
+      --temp-hot:     #fb923c;
+      --temp-very-hot:#f87171;
+      --pop-low:      #34d399;
+      --pop-mid:      #bef264;
+      --pop-high:     #fbbf24;
+      --pop-vhigh:    #60a5fa;
+      --rel-a:        #86efac;
+      --rel-b:        #fcd34d;
+      --rel-c:        #fca5a5;
+    }
+  }
+
   body {
-    font-family: -apple-system, 'Helvetica Neue', sans-serif;
-    color: #e0e0f0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro JP", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+    color: var(--text);
+    background: var(--bg);
     height: 100vh; overflow: hidden;
-    /* 静的グラデーション（アニメーションなし） */
-    background: linear-gradient(135deg, #0a0a1a 0%, #151030 40%, #0a1a2a 70%, #0a0a1a 100%);
+    -webkit-font-smoothing: antialiased;
   }
 
   .dashboard {
-    display: -webkit-flex; display: flex;
-    -webkit-flex-direction: column; flex-direction: column;
+    display: flex;
+    flex-direction: column;
     height: 100vh;
-    padding: 8px 10px 6px 10px;
+    padding: 10px 12px 8px;
     padding-top: constant(safe-area-inset-top);
     padding-top: env(safe-area-inset-top);
-    gap: 6px;
+    gap: 10px;
   }
 
   .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
-    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
     overflow: hidden;
   }
 
   /* ===== 上段 ===== */
   .top-row {
-    display: -webkit-flex; display: flex; gap: 6px;
-    -webkit-flex-shrink: 0; flex-shrink: 0;
+    display: flex; gap: 10px;
+    flex-shrink: 0;
   }
 
   .clock-card {
-    -webkit-flex: 1; flex: 1;
-    text-align: center; padding: 12px 10px;
-    display: -webkit-flex; display: flex;
-    -webkit-flex-direction: column; flex-direction: column;
-    -webkit-justify-content: center; justify-content: center;
+    flex: 1;
+    text-align: center;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .time-display {
-    font-size: 68px; font-weight: 200; letter-spacing: 3px;
-    line-height: 1; color: #e8eeff;
+    font-size: 62px; font-weight: 200; letter-spacing: 1px;
+    line-height: 1; color: var(--text);
+    font-variant-numeric: tabular-nums;
   }
   .date-display {
-    font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.5);
-    margin-top: 6px; letter-spacing: 2px;
+    font-size: 15px; font-weight: 400; color: var(--text2);
+    margin-top: 8px; letter-spacing: 1px;
   }
 
   .current-weather-card {
-    -webkit-flex: 1; flex: 1;
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center;
-    gap: 14px; padding: 10px 18px;
+    flex: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
   }
-  .current-icon { font-size: 50px; line-height: 1; }
-  .current-info { -webkit-flex: 1; flex: 1; }
-  .current-temp { font-size: 40px; font-weight: 200; line-height: 1; }
-  .current-temp .unit { font-size: 18px; opacity: 0.5; vertical-align: top; }
-  .current-desc { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .current-icon { font-size: 46px; line-height: 1; }
+  .current-info { flex: 1; min-width: 0; }
+  .current-temp {
+    font-size: 42px; font-weight: 300; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .current-temp .unit { font-size: 17px; opacity: 0.55; vertical-align: top; margin-left: 2px; }
+  .current-desc { font-size: 14px; font-weight: 500; color: var(--text); margin-top: 4px; }
   .current-detail-text {
-    font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px;
+    font-size: 12px; color: var(--text3); margin-top: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   }
   .current-details {
-    display: -webkit-flex; display: flex; gap: 8px; margin-top: 5px;
-    font-size: 11px; color: rgba(255,255,255,0.4);
-    -webkit-flex-wrap: wrap; flex-wrap: wrap;
+    display: flex; gap: 10px; margin-top: 6px;
+    font-size: 12px; color: var(--text2);
+    flex-wrap: wrap;
   }
   .current-details span {
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center; gap: 2px;
+    display: flex; align-items: center; gap: 2px;
+    font-variant-numeric: tabular-nums;
   }
-  .location-name { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 4px; }
+  .location-name { font-size: 11px; color: var(--text3); margin-top: 6px; }
 
   /* ===== 中段 ===== */
-  .pop-card { -webkit-flex-shrink: 0; flex-shrink: 0; padding: 8px 14px 10px; }
+  .pop-card { flex-shrink: 0; padding: 12px 16px 14px; }
   .section-title {
-    font-size: 10px; letter-spacing: 2px;
-    color: rgba(255,255,255,0.25); margin-bottom: 6px;
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--text3); margin-bottom: 8px;
   }
   .forecast-summary {
-    display: -webkit-flex; display: flex; gap: 6px; margin-bottom: 8px;
+    display: flex; gap: 8px; margin-bottom: 10px;
   }
   .day-summary {
-    -webkit-flex: 1; flex: 1; padding: 6px 10px;
-    background: rgba(255,255,255,0.03); border-radius: 10px;
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center; gap: 8px;
+    flex: 1; padding: 8px 10px;
+    background: var(--surface2); border-radius: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
-  .day-summary-label { font-size: 11px; color: rgba(255,255,255,0.35); min-width: 36px; }
-  .day-summary-icon { font-size: 22px; }
+  .day-summary-label { font-size: 12px; font-weight: 600; color: var(--text2); min-width: 36px; }
+  .day-summary-icon { font-size: 20px; }
   .day-summary-text {
-    font-size: 13px; color: rgba(255,255,255,0.5);
-    -webkit-flex: 1; flex: 1;
+    font-size: 13px; color: var(--text);
+    flex: 1;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .pop-scroll {
-    display: -webkit-flex; display: flex; gap: 5px;
+    display: flex; gap: 6px;
     overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px;
   }
   .pop-scroll::-webkit-scrollbar { display: none; }
   .pop-block {
-    -webkit-flex: 1; flex: 1;
-    text-align: center; padding: 8px 6px; border-radius: 12px; min-width: 0;
+    flex: 1; min-width: 0;
+    text-align: center; padding: 8px 6px; border-radius: 8px;
   }
   .pop-block.now {
-    background: rgba(100,140,255,0.12);
-    border: 1px solid rgba(100,140,255,0.2);
+    background: var(--accent-bg);
+    outline: 1px solid var(--accent);
+    outline-offset: -1px;
   }
-  .pop-block .pop-day { font-size: 9px; color: rgba(255,255,255,0.25); margin-bottom: 1px; }
-  .pop-block .pop-time { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+  .pop-block .pop-day { font-size: 10px; color: var(--text3); margin-bottom: 2px; }
+  .pop-block .pop-time { font-size: 11px; color: var(--text2); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
   .pop-block .pop-icon { font-size: 20px; margin-bottom: 3px; }
-  .pop-block .pop-value { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .pop-block .pop-value { font-size: 20px; font-weight: 600; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
   .pop-block .pop-bar-bg {
-    height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;
+    height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden;
   }
   .pop-block .pop-bar-fill { height: 100%; border-radius: 2px; }
 
   /* ===== 下段 ===== */
   .weekly-card {
-    -webkit-flex: 1; flex: 1; overflow: hidden;
-    display: -webkit-flex; display: flex;
-    -webkit-flex-direction: column; flex-direction: column;
-    padding: 8px 14px 10px;
+    flex: 1; overflow: hidden;
+    display: flex; flex-direction: column;
+    padding: 12px 16px 14px;
   }
   .weekly-list {
-    -webkit-flex: 1; flex: 1;
-    display: -webkit-flex; display: flex;
-    -webkit-flex-direction: column; flex-direction: column;
-    -webkit-justify-content: space-around; justify-content: space-around;
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: space-around;
   }
   .day-row {
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center;
-    padding: 6px; border-radius: 10px;
+    display: flex; align-items: center;
+    padding: 7px 8px; border-radius: 8px;
   }
-  .day-row.today { background: rgba(100,140,255,0.08); }
-  .day-name { width: 40px; font-size: 15px; font-weight: 500; }
-  .day-name.sun { color: #ff8a80; }
-  .day-name.sat { color: #90caf9; }
-  .day-date { width: 56px; font-size: 12px; color: rgba(255,255,255,0.3); }
-  .day-icon { width: 40px; font-size: 24px; text-align: center; }
+  .day-row.today { background: var(--accent-bg); }
+  .day-name { width: 40px; font-size: 14px; font-weight: 600; }
+  .day-name.sun { color: var(--temp-very-hot); }
+  .day-name.sat { color: var(--temp-cold); }
+  .day-date { width: 56px; font-size: 12px; color: var(--text3); }
+  .day-icon { width: 40px; font-size: 22px; text-align: center; }
   .day-desc {
-    -webkit-flex: 1; flex: 1; font-size: 13px; color: rgba(255,255,255,0.45);
+    flex: 1; font-size: 13px; color: var(--text2);
     padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .day-temp-bar {
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center; gap: 6px; width: 220px;
+    display: flex; align-items: center; gap: 6px; width: 210px;
   }
-  .day-low { width: 36px; text-align: right; font-size: 14px; color: #64b5f6; }
+  .day-low { width: 36px; text-align: right; font-size: 14px; color: var(--temp-cold); font-variant-numeric: tabular-nums; }
   .day-bar-container {
-    -webkit-flex: 1; flex: 1; height: 5px;
-    background: rgba(255,255,255,0.06); border-radius: 3px;
+    flex: 1; height: 5px;
+    background: var(--surface2); border-radius: 3px;
     position: relative; overflow: hidden;
   }
   .day-bar {
     position: absolute; height: 100%; border-radius: 3px;
-    background: linear-gradient(to right, #64b5f6, #ffa726);
+    background: linear-gradient(to right, var(--temp-cold), var(--temp-warm));
   }
-  .day-high { width: 36px; font-size: 14px; color: #ffa726; }
-  .day-pop-col { width: 52px; text-align: right; font-size: 12px; color: #64b5f6; }
+  .day-high { width: 36px; font-size: 14px; color: var(--temp-warm); font-variant-numeric: tabular-nums; }
+  .day-pop-col { width: 52px; text-align: right; font-size: 12px; color: var(--pop-vhigh); font-variant-numeric: tabular-nums; }
   .day-rel {
-    width: 22px; text-align: center; font-size: 10px;
-    padding: 1px 3px; border-radius: 3px; margin-left: 4px;
+    width: 22px; text-align: center; font-size: 11px; font-weight: 600;
+    padding: 1px 3px; border-radius: 4px; margin-left: 4px;
   }
-  .rel-A { background: rgba(100,200,100,0.2); color: #81c784; }
-  .rel-B { background: rgba(255,200,50,0.2); color: #ffd54f; }
-  .rel-C { background: rgba(255,100,100,0.2); color: #e57373; }
+  .rel-A { background: var(--rel-a-bg); color: var(--rel-a); }
+  .rel-B { background: var(--rel-b-bg); color: var(--rel-b); }
+  .rel-C { background: var(--rel-c-bg); color: var(--rel-c); }
 
-  .temp-cold { color: #90caf9; }
-  .temp-cool { color: #a5d6a7; }
-  .temp-mild { color: #fff59d; }
-  .temp-warm { color: #ffcc02; }
-  .temp-hot  { color: #ff8a65; }
-  .temp-very-hot { color: #ef5350; }
+  .temp-cold { color: var(--temp-cold); }
+  .temp-cool { color: var(--temp-cool); }
+  .temp-mild { color: var(--temp-mild); }
+  .temp-warm { color: var(--temp-warm); }
+  .temp-hot  { color: var(--temp-hot); }
+  .temp-very-hot { color: var(--temp-very-hot); }
 
   .loading {
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center;
-    -webkit-justify-content: center; justify-content: center;
-    height: 100%; font-size: 14px; color: rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; font-size: 14px; color: var(--text3);
   }
   .status-bar {
-    display: -webkit-flex; display: flex;
-    -webkit-justify-content: space-between; justify-content: space-between;
-    font-size: 9px; color: rgba(255,255,255,0.12);
-    padding: 2px 4px 0; -webkit-flex-shrink: 0; flex-shrink: 0;
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text3);
+    padding: 2px 4px 0; flex-shrink: 0;
   }
-  .error-msg { color: #ff8a80; font-size: 13px; text-align: center; padding: 20px; }
+  .error-msg { color: var(--temp-very-hot); font-size: 13px; text-align: center; padding: 20px; }
 </style>
 </head>
 <body>
@@ -214,7 +276,7 @@
   </div>
 
   <div class="card pop-card">
-    <div class="section-title">⏱ 天気と降水確率</div>
+    <div class="section-title">天気と降水確率</div>
     <div class="forecast-summary" id="forecastSummary"></div>
     <div class="pop-scroll" id="popScroll">
       <div class="loading">取得中...</div>
@@ -222,14 +284,14 @@
   </div>
 
   <div class="card weekly-card">
-    <div class="section-title">📅 週間予報</div>
+    <div class="section-title">週間予報</div>
     <div class="weekly-list" id="weeklyList">
       <div class="loading">取得中...</div>
     </div>
   </div>
 
   <div class="status-bar">
-    <span id="locationInfo">📍 気象庁予報</span>
+    <span id="locationInfo">気象庁予報</span>
     <span id="lastUpdate">最終更新: --:--</span>
   </div>
 </div>
@@ -270,7 +332,7 @@ function jmaIcon(c){c=String(c);if(JMA_ICONS[c])return JMA_ICONS[c];var f=c.char
 function jmaDesc(c){c=String(c);if(JMA_DESCS[c])return JMA_DESCS[c];var f=c.charAt(0);return f==='1'?'晴れ':f==='2'?'曇り':f==='3'?'雨':f==='4'?'雪':'―';}
 function pad2(n){return n<10?'0'+n:''+n;}
 function getTempClass(t){var v=parseFloat(t);if(isNaN(v))return '';if(v<=5)return 'temp-cold';if(v<=15)return 'temp-cool';if(v<=22)return 'temp-mild';if(v<=28)return 'temp-warm';if(v<=33)return 'temp-hot';return 'temp-very-hot';}
-function getPopColor(p){var v=parseInt(p)||0;if(v<=10)return '#66bb6a';if(v<=30)return '#aed581';if(v<=50)return '#ffd54f';if(v<=70)return '#64b5f6';return '#42a5f5';}
+function getPopColor(p){var v=parseInt(p)||0;if(v<=10)return 'var(--pop-low)';if(v<=30)return 'var(--pop-mid)';if(v<=50)return 'var(--pop-high)';if(v<=70)return 'var(--pop-vhigh)';return 'var(--pop-vhigh)';}
 function dateKey(iso){return iso.split('T')[0];}
 function dateKeyToObj(k){var p=k.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
 function cleanWeather(t){return t?t.replace(/　/g,' ').replace(/\s+/g,' ').trim():'';}
@@ -282,7 +344,7 @@ function updateClock(){
   document.getElementById('timeDisplay').textContent=
     pad2(now.getHours())+':'+pad2(now.getMinutes());
   var days=['日','月','火','水','木','金','土'];
-  var dc=now.getDay()===0?'#ff8a80':now.getDay()===6?'#90caf9':'inherit';
+  var dc=now.getDay()===0?'var(--temp-very-hot)':now.getDay()===6?'var(--temp-cold)':'inherit';
   document.getElementById('dateDisplay').innerHTML=
     now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日'+
     ' <span style="color:'+dc+'">'+days[now.getDay()]+'曜日</span>';
@@ -304,7 +366,7 @@ function fetchAll(){
     renderWeekly(forecast);
     var now=new Date();
     document.getElementById('lastUpdate').textContent='最終更新: '+pad2(now.getHours())+':'+pad2(now.getMinutes());
-    document.getElementById('locationInfo').textContent='📍 '+CONFIG.cityName+'（気象庁）';
+    document.getElementById('locationInfo').textContent=CONFIG.cityName+'（気象庁）';
   });
 }
 
@@ -360,7 +422,7 @@ function renderCurrent(amedas,forecast){
         '<span>↑<span class="temp-warm">'+todayHigh+'°</span></span>'+
         '<span>↓<span class="temp-cold">'+todayLow+'°</span></span>'+extras+
       '</div>'+
-      '<div class="location-name">📍 '+CONFIG.cityName+(amedas?'（実況）':'（予報値）')+'</div>'+
+      '<div class="location-name">'+CONFIG.cityName+(amedas?'（実況）':'（予報値）')+'</div>'+
     '</div>';
 }
 
@@ -424,7 +486,7 @@ function renderWeekly(forecast){
 
 // ===== 起動 =====
 updateClock();
-setInterval(updateClock, 60000); // ★ 毎分更新（毎秒→毎分）
+setInterval(updateClock, 60000); // 毎分更新
 fetchAll();
 setInterval(fetchAll, 30*60*1000);
 setTimeout(function(){location.reload();}, 6*60*60*1000);
